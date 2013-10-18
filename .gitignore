@@ -2,3 +2,7 @@ lib/*
 bin/*
 app.pyc
 static/js/mathjax-MathJax-727332c/*
+static/physicscalculator/*
+physicscalculator/node_modules/*
+physicscalculator/test/*
+
