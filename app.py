@@ -12,7 +12,7 @@ def blog():
     return make_response(open('blog/index.php').read())
 @app.route('/calculator')
 def calculator():
-    return make_response(open('physicscalculator/app/index.html').read())
+    return make_response(open('physicscalculator/index.html').read())
 
 
 class CalculatorAPI(restful.Resource):
