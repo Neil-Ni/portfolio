@@ -7,6 +7,10 @@ def home():
 @app.route('/blog')
 def blog():
     return make_response(open('blog/index.php').read())
+@app.route('/calculator')
+def calculator():
+#    return 'calculator page'
+    return make_response(open('physicscalculator/index.html').read())
 
 if __name__ == '__main__':
     app.run(port=8000)
