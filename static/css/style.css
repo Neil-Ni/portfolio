@@ -1,0 +1,221 @@
+
+body {
+	font-family: 'Open Sans Condensed', sans-serif;
+	margin: 25% 20% auto;
+	font-weight: bold;
+	font-size: 2em;
+	/*background:url(iPadBackgroundTexture-brown.png) repeat top left;
+	/*background:#f9e830 url(iPadBackgroundTexture-brown.png) repeat top left;*/
+	/*color:#fff;*/
+	/*font-family: 'PT Sans Narrow', Arial, sans-serif;*/
+}
+
+
+#container-main {
+	width: 100%;
+	height: 100%;
+	min-width: 400px;
+	min-height: 640px;
+	margin: auto;
+	font-weight: bold;
+}
+
+#Projects, #Abouts {
+	text-align: left;
+	font-size: 150%;
+}
+dt {
+	text-align: center;
+	font-weight: bold;
+	font-size: 150%;
+	line-height: 2em;
+}
+#name{
+	text-align: left;
+	font-size: 350%;
+}
+dt:hover {
+	
+}
+.hide {
+	display: none;
+}
+
+#Projects-details {
+	height: 140%;
+	width: 100%;
+	min-width:  450px;
+	min-height: 1250px;
+	margin: auto;
+	text-align: left;
+	font-weight: bold;
+	clear: both;
+}
+
+
+#About-details-main {
+	height: 25%;
+	width: 100%;
+	min-width: 400px;
+	min-height: 450px;
+
+	margin: auto;
+	text-align: left;
+	font-weight: bold;
+	position: relative;
+
+}
+#About-details {
+	height: 12%;
+	width: 100%;
+	min-width: 400px;
+	min-height: 250px;
+	margin: auto;
+	text-align: left;
+	font-weight: bold;
+	position: relative;
+
+}
+
+li {
+	list-style-type: none;
+}
+h1 {
+	font-size: 125%;	
+}
+h2 {
+	text-align: center;
+	font-size: 90%;	
+}
+li {
+	font-size: 80%;
+}
+
+/*Define Columns*/
+
+#first_column_header {
+	width: 25%;
+	text-align: right;
+}
+.first_column {
+	width: 25%;
+	margin: auto;
+    height: 8%;
+    float: left;
+}
+.second_column {
+	margin: auto 2%;
+	width: 65%;
+    height: 6%;
+    float: left;
+}
+/*List of project names and description*/
+/*add different font to differentiate the project name*/
+
+div.project {
+	height: 17%;
+	max-height: 190px;
+	position: relative;
+	
+}
+
+
+li.project_name, li.about, li.skills{
+	text-align: right;
+}
+
+li.project_name:hover{
+	text-align: right;
+	cursor: pointer;
+	color: #652F11;
+}
+
+li.Project_Short_Description {
+	font-family: "Yanone Kaffeesatz", sans-serif;
+	font-size: 100%;
+  	font-weight: 100;
+}
+
+li.GIT {
+	font-weight: bold;
+}
+
+li.Project_long_Description {
+   	margin: 2% auto;
+}
+
+.Project_images {
+	margin: 2% auto;
+}
+.Project_images_Pad {
+	margin: 2% auto;
+}
+
+.roundabout-holder {
+	list-style: none;
+	padding: 0;
+	margin: 5% auto;
+	height: 300px;
+	width: 300px;
+}
+
+.Project_images img.roundabout-moveable-item {
+  	height: 240px;
+  	width: 160px;
+  	cursor: pointer;
+  	background-color: #ccc;
+    border: 1px solid #999;
+}
+
+.Project_images_Pad img.roundabout-moveable-item {
+  	height: 160px;
+  	width: 240px;
+  	cursor: pointer;
+  	background-color: #ccc;
+    border: 1px solid #999;
+}
+
+.roundabout-in-focus {
+  	cursor: auto;
+}
+
+/*Define hyperlink
+*/
+a {
+	cursor: pointer;
+	font-weight: bold;
+	/*line-height: 2em;*/
+/*	border-bottom: 1px solid #c5c5c5;
+	border-top: 1px solid white;
+*/
+}
+
+a:link    {
+  /* Applies to all unvisited links */
+  text-decoration:  none;
+  font-weight:      bold;
+  background-color: none;
+  color:            black;
+  } 
+a:visited {
+  /* Applies to all visited links */
+  text-decoration:  none;
+  font-weight:      bold;
+  background-color: none;
+  color:            black;
+  } 
+a:hover   {
+  /* Applies to links under the pointer */
+  cursor: pointer;
+  text-decoration:  none;
+  font-weight:      bold;
+  background-color: none;
+  color:            #652F11;
+  } 
+a:active  {
+  /* Applies to activated links */
+  text-decoration:  none;
+  font-weight:      bold;
+  background-color: none;
+  color: black;
+  } 
