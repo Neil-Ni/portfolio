@@ -12,7 +12,8 @@
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
         <!-- build:css(.tmp) styles/main.css -->
-        <link rel="stylesheet" src="static/physicscalculator/styles/main.css">
+        <link rel="stylesheet" href="static/physicscalculator/styles/main.scss">
+	<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML&delayStartupUntil=configured&dummy=.js"></script>
         <!-- endbuild -->
 </head>
   <body ng-app="physicscalculatorApp" ng-controller='MainCtrl'>
@@ -28,13 +29,40 @@
     <!-- Add your site or application content here -->
     <div class="bar">
     <!-- Create a binding between the searchString model and the text field -->
-    <input type="text" ng-model="searchString" placeholder="Enter your search terms" />
+    <div class='container-fluid'>
+    <pre>Model: {{selected| json}}</pre>
+    <input type="text" ng-model="newNumerator" typeahead="item for item in items | filter:$viewValue | limitTo:8">
+   </div>
+    <input autoComplete ui-items="items" ng-model="newNumerator"/> <button ng-click="addNumerator()">Add</button>
+    <input type="text" autoComplete ui-items="items" ng-model="newDenominator" ng-change="searchString=newDenominator" placeholder="denominator" /> <button ng-click="addDenominator()">Add</button>
+
     </div>
     <ul>
     <li ng-repeat="i in items | searchFor:searchString">
-    <p>{{i.name}}</p>
+    <p>{{i.name}} <span mathjax-bind="i.expression"></span></p>    
     </li>
     </ul>
+    <input type="text" ng-model="expression"><br>
+    <span mathjax-bind="expression"></span>
+   
+    <input type="text" ng-model="numerator[0]"><br>
+    <input type="text" ng-model="denominator[0]"><br>
+
+
+
+    <ul>
+    <li ng-repeat="i in numerators">
+    <span mathjax-bind="i"></span>
+    </li>
+    </ul>
+    <ul>
+    <li ng-repeat="i in denominators">
+    <span mathjax-bind="i"></span>
+    </li>
+    </ul>
+
+    <span mathjax-bind="finalExpression"></span>
+
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
      <script>
@@ -46,10 +74,12 @@
        ga('create', 'UA-XXXXX-X');
        ga('send', 'pageview');
     </script>
-
+    
     <script src="static/physicscalculator/bower_components/jquery/jquery.js"></script>
     <script src="static/physicscalculator/bower_components/angular/angular.js"></script>
     <script src="static/physicscalculator/bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="static/physicscalculator/bower_components/angular-ui/build/angular-ui.min.js"></script>
+    <script src="static/physicscalculator/bower_components/ui-bootstrap/ui-bootstrap-tpls-0.6.0.min.js"></script>
         <!-- build:js scripts/plugins.js -->
         <script src="static/physicscalculator/bower_components/bootstrap-sass/js/bootstrap-affix.js"></script>
         <script src="static/physicscalculator/bower_components/bootstrap-sass/js/bootstrap-alert.js"></script>
@@ -71,8 +101,11 @@
         <script src="static/physicscalculator/bower_components/angular-cookies/angular-cookies.js"></script>
         <script src="static/physicscalculator/bower_components/angular-sanitize/angular-sanitize.js"></script>
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
+
         <script src="static/physicscalculator/scripts/app.js"></script>
+        <script src="static/physicscalculator/scripts/directives.js"></script>
         <script src="static/physicscalculator/scripts/controllers/main.js"></script>
+	<!--<script src="static/js/mathjax-MathJax-727332c/MathJax.js"></script>-->
         <!-- endbuild -->
 </body>
 </html>
