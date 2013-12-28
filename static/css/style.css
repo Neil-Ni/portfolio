@@ -20,7 +20,7 @@ body {
 	font-weight: bold;
 }
 
-#Projects, #Abouts {
+#Projects, #Abouts, #Blog {
 	text-align: left;
 	font-size: 150%;
 }
@@ -31,8 +31,9 @@ dt {
 	line-height: 2em;
 }
 #name{
+	margin-top: 5%;
 	text-align: left;
-	font-size: 350%;
+	font-size: 450%;
 }
 dt:hover {
 	
