@@ -25,7 +25,9 @@ def physics():
 @app.route('/mathJax')
 def mathJax():
     return make_response(open('mathJax/index.html').read())
-
+@app.route('/scatterPlot')
+def scatterPlot():
+	return make_response(open('scatterPlot/index.html').read())
 
 class CalculatorAPI(restful.Resource):
     def get(self):
