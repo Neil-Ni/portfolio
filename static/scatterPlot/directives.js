@@ -3,29 +3,37 @@ angular.module('scatterPlotApp.directives', [])
     return {
 	restrict: 'A',
 	link: function(scope, element, attrs){
-	if (!Detector.webgl) Detector.addGetWebGLMessage();
 	var clock = new THREE.Clock();
-	var SCREEN_HEIGHT = parseInt(attrs.height);
-	var SCREEN_WIDTH = parseInt(attrs.width);
+	var height = parseInt(attrs.height);
+	var width = parseInt(attrs.width);
 	var scatterPlot
 	var camera, scene, renderer, mesh, meshes = [];
 	var p;
-	var paused = false;
+	var update = false;
 	var down = false;
 	var sx = 0, sy = 0;
-
+	var stockData;
 	THREE.LeftAlign = 1;
 	THREE.CenterAlign = 0;
 	THREE.RightAlign = -1;
 	THREE.TopAlign = -1;
 	THREE.BottomAlign = 1;
 	
-	init();
-	animate();
+
+	scope.$watch('stockData', function (newValue) {
+		if(newValue.content){ 
+		    console.log(newValue); 
+		    stockData = newValue.content; 
+		    init();
+		    animate();
+		}
+
+            }, true);
+
 	function init() {
 
 	    renderer = new THREE.WebGLRenderer({antialias:true});
-	    renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	    renderer.setSize(width, height);
 
 	    element.append(renderer.domElement);
 
@@ -33,105 +41,49 @@ angular.module('scatterPlotApp.directives', [])
 
 	    scene = new THREE.Scene();
 
-	    camera = new THREE.PerspectiveCamera(45, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 10000);
-	    camera.position.z = 200;
+	    var numberOfSymbols = Object.keys(stockData.symbols).length;
+	    var sizeOfEachSymbolArray = stockData.date.length;
+	
+	    camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000);
+	    camera.position.z = numberOfSymbols;
 	    camera.position.x = 0;
-	    camera.position.y = 10;
+	    camera.position.y = numberOfSymbols/4;
+
 	    scene.add(camera);
 
 	    scatterPlot = new THREE.Object3D();
 	    scene.add(scatterPlot);
 
 	    scatterPlot.rotation.y = 0.5;
-	    function v(x, y, z) {
-		return new THREE.Vector3(x, y, z);
+
+    
+	    scatterPlot.add(constructLines(sizeOfEachSymbolArray/2.+1, -sizeOfEachSymbolArray/2.-1, 10, -10, numberOfSymbols/2.+1, -numberOfSymbols/2.-1));	
+	    var titles = ['2013-12-26', 'X: Time evolution(day) starting from 2013-01-01', 'Y: Positive deviation( (Each datapoint - average)/average ) from the stock\'s average', 'Negative deviation from the stock\'s average', 'Z: each Z value represent a stock symbol', 'stock symbol'];
+	    var positions = [sizeOfEachSymbolArray/2.+20, -sizeOfEachSymbolArray/2.-20, 35, -35, numberOfSymbols/2.+10, -numberOfSymbols/2.-10];
+	    
+            titleAxesAtPositions(titles, positions); // global scatterPlot
+
+
+	    var pointCount = numberOfSymbols * sizeOfEachSymbolArray;
+	    var groups = 1;
+	    var pointGeo = new THREE.Geometry();
+
+	    var color = 0xff0000;
+	    var group = 0;
+	    var index = 0; 
+	    var average = 0;
+	    for (var key in stockData.symbols) {
+		average = averageOfTheStock(stockData.symbols[key]);
+		for (var i = 0; i < stockData.symbols[key].length; i++){
+			var x = i - sizeOfEachSymbolArray/2.,
+			    y = stockData.symbols[key][i] == 0 ? 0 : (stockData.symbols[key][i]-average) / average * 100,
+			    z = index - numberOfSymbols/2.;
+			pointGeo.vertices.push(v(x, y, z));
+		}
+		index++; 	
 	    }
 
-	    var lineGeo = new THREE.Geometry();
-	    lineGeo.vertices.push(
-		    v(-50, 0, 0), v(50, 0, 0),
-		    v(0, -50, 0), v(0, 50, 0),
-		    v(0, 0, -50), v(0, 0, 50),
-
-		    v(-50, 50, -50), v(50, 50, -50),
-		    v(-50, -50, -50), v(50, -50, -50),
-		    v(-50, 50, 50), v(50, 50, 50),
-		    v(-50, -50, 50), v(50, -50, 50),
-
-		    v(-50, 0, 50), v(50, 0, 50),
-		    v(-50, 0, -50), v(50, 0, -50),
-		    v(-50, 50, 0), v(50, 50, 0),
-		    v(-50, -50, 0), v(50, -50, 0),
-
-		    v(50, -50, -50), v(50, 50, -50),
-		    v(-50, -50, -50), v(-50, 50, -50),
-		    v(50, -50, 50), v(50, 50, 50),
-		    v(-50, -50, 50), v(-50, 50, 50),
-
-		    v(0, -50, 50), v(0, 50, 50),
-		    v(0, -50, -50), v(0, 50, -50),
-		    v(50, -50, 0), v(50, 50, 0),
-		    v(-50, -50, 0), v(-50, 50, 0),
-
-		    v(50, 50, -50), v(50, 50, 50),
-		    v(50, -50, -50), v(50, -50, 50),
-		    v(-50, 50, -50), v(-50, 50, 50),
-		    v(-50, -50, -50), v(-50, -50, 50),
-
-		    v(-50, 0, -50), v(-50, 0, 50),
-		    v(50, 0, -50), v(50, 0, 50),
-		    v(0, 50, -50), v(0, 50, 50),
-		    v(0, -50, -50), v(0, -50, 50)
-	    );
-	    var lineMat = new THREE.LineBasicMaterial({color:0x808080, lineWidth:1});
-	    var line = new THREE.Line(lineGeo, lineMat);
-	    line.type = THREE.Lines;
-	    scatterPlot.add(line);
-
-	    var titleX = createText2D('-X');
-	    titleX.position.x = -60;
-	    scatterPlot.add(titleX);
-
-	    var titleX = createText2D('X');
-	    titleX.position.x = 60;
-	    scatterPlot.add(titleX);
-
-	    var titleX = createText2D('-Y');
-	    titleX.position.y = -60;
-	    scatterPlot.add(titleX);
-
-	    var titleX = createText2D('Y');
-	    titleX.position.y = 60;
-	    scatterPlot.add(titleX);
-
-	    var titleX = createText2D('-Z');
-	    titleX.position.z = -60;
-	    scatterPlot.add(titleX);
-
-	    var titleX = createText2D('Z');
-	    titleX.position.z = 60;
-	    scatterPlot.add(titleX);
-
-	    var pointCount = 10000;
-	    var groups = 4;
-	    var pointGeo = [];
-	    for (var x = 0; x < groups; x++) pointGeo[x] = new THREE.Geometry();
-
-	    var color = [0xff0000, 0x00FF00, 0x0000FF, 0xFF00FF];
-	    var group = -1;
-	    for (var i = 0; i < pointCount; i++) {
-		var index = i % groups;
-		if (index == 0) group++;
-		var x = Math.random() * 100 - 50;
-		var y = x * 0.8 + Math.random() * 20 - 10;
-		var z = x * 0.7 + Math.random() * 30 - 15;
-		pointGeo[index].vertices.push(new THREE.Vector3(x, y, z));
-		pointGeo[index].vertices[group].angle = Math.atan2(z, x);
-		pointGeo[index].vertices[group].radius = Math.sqrt(x * x + z * z);
-		pointGeo[index].vertices[group].speed = (z / 100) * (x / 100);
-	    }
-
-	    for (x = 0; x < groups; x++) createMesh(pointGeo[x], scene, color[x]);
+	    createMesh(pointGeo, scene, color);
 
 	    renderer.render(scene, camera);
 	    element.on('resize', onWindowResize);
@@ -139,6 +91,81 @@ angular.module('scatterPlotApp.directives', [])
 	    element.on('mousemove', onmousemove);
 	    element.on('mouseup', onmouseup);
 	}
+	function averageOfTheStock(data){
+		var length = data.length;
+		var sum = 0;
+		for(var i = 0; i < length; i++){
+			sum += data[i];
+		} 
+		return sum/length;
+	} 
+	function v(x, y, z) {
+		return new THREE.Vector3(x, y, z);
+	    }
+	function constructLines(x_hi, x_lo, y_hi, y_lo, z_hi, z_lo){
+	    var lineGeo = new THREE.Geometry();
+	    lineGeo.vertices.push(
+		    v(x_lo, 0, 0), v(x_hi, 0, 0),
+		    v(0, y_lo, 0), v(0, y_hi, 0),
+		    v(0, 0, z_lo), v(0, 0, z_hi),
+
+		    v(x_lo, y_hi, z_lo), v(x_hi, y_hi, z_lo),
+		    v(x_lo, y_lo, z_lo), v(x_hi, y_lo, z_lo),
+		    v(x_lo, y_hi, z_hi), v(x_hi, y_hi, z_hi),
+		    v(x_lo, y_lo, z_hi), v(x_hi, y_lo, z_hi),
+
+		    v(x_lo, 0, z_hi), v(x_hi, 0, z_hi),
+		    v(x_lo, 0, z_lo), v(x_hi, 0, z_lo),
+		    v(x_lo, y_hi, 0), v(x_hi, y_hi, 0),
+		    v(x_lo, y_lo, 0), v(x_hi, y_lo, 0),
+
+		    v(x_hi, y_lo, z_lo), v(x_hi, y_hi, z_lo),
+		    v(x_lo, y_lo, z_lo), v(x_lo, y_hi, z_lo),
+		    v(x_hi, y_lo, z_hi), v(x_hi, y_hi, z_hi),
+		    v(x_lo, y_lo, z_hi), v(x_lo, y_hi, z_hi),
+
+		    v(0, y_lo, z_hi), v(0, y_hi, z_hi),
+		    v(0, y_lo, z_lo), v(0, y_hi, z_lo),
+		    v(x_hi, y_lo, 0), v(x_hi, y_hi, 0),
+		    v(x_lo, y_lo, 0), v(x_lo, y_hi, 0),
+
+		    v(x_hi, y_hi, z_lo), v(x_hi, y_hi, z_hi),
+		    v(x_hi, y_lo, z_lo), v(x_hi, y_lo, z_hi),
+		    v(x_lo, y_hi, z_lo), v(x_lo, y_hi, z_hi),
+		    v(x_lo, y_lo, z_lo), v(x_lo, y_lo, z_hi),
+
+		    v(x_lo, 0, z_lo), v(x_lo, 0, z_hi),
+		    v(x_hi, 0, z_lo), v(x_hi, 0, z_hi),
+		    v(0, y_hi, z_lo), v(0, y_hi, z_hi),
+		    v(0, y_lo, z_lo), v(0, y_lo, z_hi)
+	    );
+	    var lineMat = new THREE.LineBasicMaterial({color:0x808080, lineWidth:1});
+	    var line = new THREE.Line(lineGeo, lineMat);
+	    line.type = THREE.Lines;
+	    return line;
+	} 
+      function titleAxesAtPositions(titles, positions) {
+	    var title;
+	    title = createText2D(titles[0])
+	    title.position.x = positions[0];
+	    scatterPlot.add(title);
+	    title = createText2D(titles[1]);
+	    title.position.x = positions[1];
+	    scatterPlot.add(title);
+	    title = createText2D(titles[2]);
+	    title.position.y = positions[2];
+	    scatterPlot.add(title);
+	    title = createText2D(titles[3]);
+	    title.position.y = positions[3];
+	    scatterPlot.add(title);
+	    title = createText2D(titles[4]);
+	    title.position.z = positions[4];
+	    scatterPlot.add(title);
+	    title = createText2D(titles[5]);
+	    title.position.z = positions[5];
+	    scatterPlot.add(title);
+
+      }
       function animate() {
         requestAnimationFrame( animate, renderer.domElement);
         render();
@@ -153,7 +180,7 @@ angular.module('scatterPlotApp.directives', [])
 	    var vertices_tmp = [];
 
 	    for (i = 0; i < vl; i++) {
-		geometry.vertices[ i ] = new THREE.Vector3(vertices[i].x, vertices[i].y, vertices[i].z);
+		geometry.vertices[ i ] = v(vertices[i].x, vertices[i].y, vertices[i].z);
 		vertices_tmp[ i ] = [ vertices[i].x, vertices[i].y, vertices[i].z, 0, 0 ];
 	    }
 
@@ -211,18 +238,25 @@ angular.module('scatterPlotApp.directives', [])
 	    camera.updateProjectionMatrix();
 	    camera.lookAt(scene.position);
 	}
-
+	var elapsedTime = 0; 
+	function updateClockInfo(){
+	    update = clock.getDelta() < 1 ? true: false;
+	    elapsedTime = clock.getElapsedTime();
+	}
 	function onmousedown(event) {
+	    updateClockInfo();
 	    down = true;
 	    sx = event.clientX;
 	    sy = event.clientY;
 	}
 
 	function onmouseup(event) {
+	    updateClockInfo();
 	    down = false;
 	}
 
 	function onmousemove(event) {
+	    updateClockInfo();
 	    if (down) {
 		var dx = event.clientX - sx;
 		var dy = event.clientY - sy;
@@ -235,10 +269,10 @@ angular.module('scatterPlotApp.directives', [])
 
 	var j, i, jl, cm, data, vertices, vertices_tmp, vl, d, vt, delta;
 	function render() {
-	    console.log("rendering");
+		update = clock.getElapsedTime() - elapsedTime > 1 ? false : true;
+		if(update){
+		console.log("rendering");
 		renderer.clear();
-		delta = 10 * clock.getDelta();
-		delta = delta < 2 ? delta : 2;
 
 		for (j = 0, jl = meshes.length; j < jl; j++) {
 		    data = meshes[ j ];
@@ -252,9 +286,7 @@ angular.module('scatterPlotApp.directives', [])
 	    
 		camera.lookAt(scene.position);
 		renderer.render(scene, camera);
-	}
-	function onmessage(event) {
-	    paused = (event.data == 'pause');
+	       } 
 	}
 	}
     }

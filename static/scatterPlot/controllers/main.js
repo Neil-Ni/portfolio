@@ -3,8 +3,8 @@
 var app = angular.module('scatterPlotApp');
 
 app.controller('MainCtrl', function ($scope, $http, StockModel) {
-  $scope.stockModel = StockModel;
 
+  $scope.stockData = StockModel;
 
 
 
@@ -22,7 +22,7 @@ app.controller('MainCtrl', function ($scope, $http, StockModel) {
   });
 
   $scope.printModel = function(){
-	console.log($scope.stockModel);
+	console.log($scope.stockData);
   }
   $scope.addNumerator = function() {
         $scope.numerators.push($scope.newNumerator);
