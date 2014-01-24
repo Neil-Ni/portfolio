@@ -43,7 +43,7 @@ dt:hover {
 }
 
 #Projects-details {
-	height: 140%;
+	height: 2000px;
 	width: 100%;
 	min-width:  450px;
 	min-height: 1250px;
@@ -64,7 +64,7 @@ dt:hover {
 	text-align: left;
 	font-weight: bold;
 	position: relative;
-
+  clear: both; 
 }
 #About-details {
 	height: 12%;
@@ -96,7 +96,7 @@ li {
 
 #first_column_header {
 	width: 25%;
-	text-align: right;
+	text-align: left;
 }
 .first_column {
 	width: 25%;
@@ -122,7 +122,7 @@ div.project {
 
 
 li.project_name, li.about, li.skills{
-	text-align: right;
+	text-align: left;
 }
 
 li.project_name:hover{
