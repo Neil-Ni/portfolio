@@ -20,17 +20,13 @@ body {
 	font-weight: bold;
 }
 
-#Projects, #Abouts, #Blog {
+#Projects, #Abouts, #Blog, #LinkedIn {
 	text-align: left;
-	font-size: 150%;
 }
-#LindedIn {
-  font-size:60%;
-}
+
 dt {
 	text-align: center;
 	font-weight: bold;
-	font-size: 150%;
 	line-height: 2em;
 }
 #name{
@@ -67,13 +63,13 @@ dt:hover {
 	text-align: left;
 	font-weight: bold;
 	position: relative;
-  clear: both; 
+	clear: both; 
 }
 #About-details {
 	height: 12%;
 	width: 100%;
 	min-width: 400px;
-	min-height: 250px;
+	min-height: 320px;
 	margin: auto;
 	text-align: left;
 	font-weight: bold;
@@ -129,7 +125,7 @@ li.project_name, li.about, li.skills{
 }
 
 li.project_name:hover{
-	text-align: right;
+	/*text-align: right;*/
 	cursor: pointer;
 	color: #652F11;
 }
@@ -183,6 +179,41 @@ li.Project_long_Description {
   	cursor: auto;
 }
 
+/*current*/
+
+#Current {
+	height: 12%;
+	width: 100%;
+	min-width: 400px;
+	min-height: 500px;
+	margin: auto;
+	text-align: left;
+	font-weight: bold;
+	position: relative;
+
+}
+
+
+div.project_current {
+	height: 17%;
+	max-height: 190px;
+	position: relative;	
+}
+
+
+li.project_name_current, li.about, li.skills{
+	text-align: left;
+}
+
+li.Project_Short_Description_Current {
+	font-family: "Yanone Kaffeesatz", sans-serif;
+	font-size: 100%;
+  	font-weight: 100;
+}
+
+li.Project_Long_Description_Current {
+	margin: 2% auto;
+}
 /*Define hyperlink
 */
 a {
